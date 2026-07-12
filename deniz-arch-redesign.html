@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دنیز آرک | مهندسی طرح، نقش و سازه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============ TOKENS ============ */
+:root{
+  --blue:#2E6F9E;
+  --blue-light:#7FB2D6;
+  --blue-deep:#123349;
+  --brass:#B98A46;
+  --brass-light:#E7C787;
+  --brass-dark:#8C6830;
+  --ink:#101A2C;
+  --ink-soft:#16223A;
+  --paper:#F1ECDE;
+
+  --bg:#F1ECDE;
+  --bg-soft:#E7DFC7;
+  --surface:#FBF8F0;
+  --surface-2:#FFFFFF;
+  --text:#101A2C;
+  --text-muted:rgba(16,26,44,.62);
+  --border:rgba(16,26,44,.14);
+  --border-strong:rgba(16,26,44,.26);
+  --shadow:0 24px 50px -24px rgba(16,26,44,.4);
+  --radius-s:8px;
+  --radius-m:14px;
+  --radius-l:22px;
+
+  --font-display:'Vazirmatn',sans-serif;
+  --font-body:'Vazirmatn',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+[data-theme="dark"]{
+  --bg:#0B1322;
+  --bg-soft:#0F1A2E;
+  --surface:#131F38;
+  --surface-2:#17233F;
+  --text:#F1ECDE;
+  --text-muted:rgba(241,236,222,.62);
+  --border:rgba(241,236,222,.14);
+  --border-strong:rgba(241,236,222,.26);
+  --shadow:0 24px 50px -24px rgba(0,0,0,.65);
+}
+
+/* ============ RESET ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  transition:background .4s ease,color .4s ease;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+input{font:inherit;color:inherit;}
+ul{list-style:none;}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:800;line-height:1.28;letter-spacing:-.01em;}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px;}
+.ltr{direction:ltr;unicode-bidi:isolate;font-family:var(--font-mono);}
+.is-hidden{display:none !important;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  html{scroll-behavior:auto;}
+}
+
+/* ============ UTILITIES ============ */
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:28px;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--brass-dark);text-transform:uppercase;
+}
+[data-theme="dark"] .eyebrow{color:var(--brass-light);}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--brass);}
+.section{padding:100px 0;}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:48px;flex-wrap:wrap;}
+.section-head h2{font-size:clamp(28px,3.6vw,42px);}
+.section-head p{color:var(--text-muted);max-width:440px;font-size:15px;}
+.muted{color:var(--text-muted);}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 28px;border-radius:999px;font-weight:700;font-size:14.5px;
+  transition:transform .25s ease,box-shadow .25s ease,background .25s ease,color .25s ease;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 14px 30px -12px rgba(46,111,158,.6);}
+.btn-primary:hover{background:var(--blue-deep);}
+.btn-brass{background:var(--brass);color:var(--ink);box-shadow:0 14px 30px -12px rgba(185,138,70,.55);}
+.btn-brass:hover{background:var(--brass-dark);color:#fff;}
+.btn-ghost{border:1.5px solid var(--border-strong);background:transparent;color:var(--text);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+.btn-ghost-light{border:1.5px solid rgba(241,236,222,.35);color:var(--paper);}
+.btn-ghost-light:hover{border-color:var(--brass-light);color:var(--brass-light);}
+.btn-sm{padding:10px 18px;font-size:13px;}
+
+/* grid-paper background */
+.grid-paper{
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+.grid-paper-dark{
+  background-image:
+    linear-gradient(rgba(127,178,214,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127,178,214,.16) 1px, transparent 1px),
+    linear-gradient(rgba(127,178,214,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127,178,214,.3) 1px, transparent 1px);
+  background-size:22px 22px,22px 22px,110px 110px,110px 110px;
+}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+.reveal-delay-1.in-view{transition-delay:.08s;}
+.reveal-delay-2.in-view{transition-delay:.16s;}
+.reveal-delay-3.in-view{transition-delay:.24s;}
+
+/* scroll progress */
+.scroll-progress{position:fixed;top:0;inset-inline:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--brass));transform:scaleX(0);transform-origin:right center;z-index:300;}
+
+/* ============ SVG SPRITE ICONS (visually hidden defs reused via use) ============ */
+.icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ============ HEADER ============ */
+.site-header{
+  position:sticky;top:0;z-index:200;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding-block:16px;gap:20px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand .compass-mark{width:38px;height:38px;color:var(--blue);}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;}
+.brand-text .en{font-family:var(--font-mono);font-weight:700;font-size:15px;letter-spacing:.06em;}
+.brand-text .fa{font-size:11px;color:var(--text-muted);}
+.nav-links{display:flex;align-items:center;gap:30px;font-size:14.5px;font-weight:600;}
+.nav-links a{position:relative;padding-block:6px;color:var(--text-muted);transition:color .2s ease;}
+.nav-links a::after{content:"";position:absolute;bottom:0;inset-inline:0;height:2px;background:var(--blue);transform:scaleX(0);transition:transform .25s ease;transform-origin:center;}
+.nav-links a:hover{color:var(--text);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.theme-toggle{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;
+  transition:border-color .2s ease, transform .3s ease;
+}
+.theme-toggle:hover{border-color:var(--brass);}
+.theme-toggle .icon{width:18px;height:18px;}
+.theme-toggle .moon{display:none;}
+[data-theme="dark"] .theme-toggle .sun{display:none;}
+[data-theme="dark"] .theme-toggle .moon{display:block;}
+.menu-toggle{display:none;width:40px;height:40px;align-items:center;justify-content:center;}
+.menu-toggle .icon{width:22px;height:22px;}
+.mobile-panel{display:none;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;background:var(--ink);color:var(--paper);overflow:hidden;
+  padding-top:88px;padding-bottom:0;
+}
+.hero .grid-paper-dark{position:absolute;inset:0;animation:driftGrid 40s linear infinite;}
+@keyframes driftGrid{from{background-position:0 0,0 0,0 0,0 0;}to{background-position:220px 0,220px 0,220px 0,220px 0;}}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 75% 20%, rgba(46,111,158,.35), transparent 65%);pointer-events:none;}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:64px 0;}
+.hero-copy .eyebrow{color:var(--brass-light);}
+.hero-copy .eyebrow::before{background:var(--brass-light);}
+.hero-copy h1{font-size:clamp(34px,4.6vw,58px);margin-block:22px 20px;color:var(--paper);}
+.hero-copy h1 em{font-style:normal;color:var(--brass-light);}
+.hero-copy p{font-size:16.5px;color:rgba(241,236,222,.72);max-width:480px;margin-bottom:32px;}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:46px;}
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;}
+.hero-visual svg{width:100%;max-width:400px;height:auto;overflow:visible;}
+.iso-path{stroke:var(--brass-light);stroke-width:1.6;fill:none;stroke-dasharray:900;stroke-dashoffset:900;animation:drawLine 2.2s ease forwards;}
+.iso-fill{opacity:0;animation:fadeFill .8s ease forwards;}
+@keyframes drawLine{to{stroke-dashoffset:0;}}
+@keyframes fadeFill{to{opacity:1;}}
+.compass-rose{position:absolute;top:0;left:-6%;width:110px;height:110px;opacity:.55;animation:spin 50s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.scroll-cue{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;color:rgba(241,236,222,.55);padding-bottom:26px;position:relative;z-index:2;}
+.scroll-cue .icon{width:14px;height:14px;animation:bounceDown 1.8s ease-in-out infinite;}
+@keyframes bounceDown{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+
+/* dimension strip */
+.dim-strip{background:var(--ink-soft);border-top:1px solid rgba(241,236,222,.1);position:relative;z-index:2;}
+.dim-row{display:flex;flex-wrap:wrap;}
+.dim-item{flex:1 1 200px;text-align:center;padding:26px 20px;border-inline-start:1px dashed rgba(241,236,222,.2);position:relative;}
+.dim-item:first-child{border-inline-start:none;}
+.dim-item b{display:block;font-family:var(--font-mono);font-size:26px;color:var(--brass-light);}
+.dim-item span{font-size:12.5px;color:rgba(241,236,222,.6);}
+
+/* ============ SERVICE CHIPS ============ */
+.chip-strip{padding:54px 0;border-bottom:1px solid var(--border);}
+.chip-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.chip{
+  display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface);font-size:13.5px;font-weight:600;
+  transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.chip:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:var(--shadow);}
+.chip .icon{width:16px;height:16px;color:var(--blue);}
+
+/* ============ TILT CARD SYSTEM ============ */
+.tilt-stage{perspective:1200px;}
+.tilt-card{
+  position:relative;transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .5s cubic-bezier(.22,1,.36,1), box-shadow .4s ease;
+  border-radius:var(--radius-l);
+  background:var(--surface);border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.tilt-card:hover{box-shadow:0 32px 60px -20px rgba(16,26,44,.45);}
+.tilt-layer{transition:transform .5s cubic-bezier(.22,1,.36,1);will-change:transform;}
+.corner-mark{position:absolute;width:16px;height:16px;opacity:0;transition:opacity .3s ease;pointer-events:none;z-index:5;}
+.corner-mark::before,.corner-mark::after{content:"";position:absolute;background:var(--brass);}
+.corner-mark::before{top:50%;inset-inline:0;height:1.4px;transform:translateY(-50%);}
+.corner-mark::after{inset-block:0;left:50%;width:1.4px;transform:translateX(-50%);}
+.corner-mark.tl{top:10px;inset-inline-start:10px;}
+.corner-mark.tr{top:10px;inset-inline-end:10px;}
+.corner-mark.bl{bottom:10px;inset-inline-start:10px;}
+.corner-mark.br{bottom:10px;inset-inline-end:10px;}
+.tilt-card:hover .corner-mark{opacity:.9;}
+
+/* ============ PLAN GRAPHIC (product visual) ============ */
+.plan-figure{position:relative;aspect-ratio:4/3;background:var(--bg-soft);overflow:hidden;}
+.plan-graphic{position:absolute;inset:0;}
+.plan-graphic .room{position:absolute;border:1.6px solid var(--text);background:rgba(46,111,158,.08);}
+.plan-graphic.mirror{transform:scaleX(-1);}
+.plan-tag{position:absolute;top:12px;inset-inline-start:12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+.plan-tag .icon{width:12px;height:12px;}
+.plan-north{position:absolute;top:12px;inset-inline-end:12px;font-family:var(--font-mono);font-size:10px;display:flex;flex-direction:column;align-items:center;color:var(--text-muted);}
+.plan-north .icon{width:14px;height:14px;color:var(--brass-dark);}
+
+/* ============ PRODUCTS ============ */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.filter-chip{
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  border:1px solid var(--border-strong);color:var(--text-muted);
+  transition:all .25s ease;
+}
+.filter-chip.is-active,.filter-chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+[data-theme="dark"] .filter-chip.is-active,[data-theme="dark"] .filter-chip:hover{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:26px;}
+.product-card{transition:opacity .35s ease, transform .35s ease;}
+.product-card.is-hidden{display:none;}
+.product-badge{position:absolute;bottom:12px;inset-inline-start:12px;background:var(--brass);color:var(--ink);font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;z-index:4;}
+.product-body{padding:20px;}
+.product-body h3{font-size:16.5px;margin-bottom:8px;}
+.product-meta{display:flex;align-items:center;gap:14px;font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.product-meta span{display:flex;align-items:center;gap:5px;}
+.product-meta .icon{width:13px;height:13px;}
+.product-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px dashed var(--border-strong);}
+.price{font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--blue);}
+[data-theme="dark"] .price{color:var(--blue-light);}
+.price sup{font-size:10px;font-weight:500;color:var(--text-muted);margin-inline-start:3px;}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;transition:background .25s ease, transform .25s ease;}
+.icon-btn:hover{background:var(--blue);}
+.icon-btn .icon{width:16px;height:16px;}
+
+/* ============ CONTENT TABS (مطالب / آموزش) ============ */
+.tab-row{display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px;width:fit-content;margin-bottom:36px;}
+.tab-btn{padding:10px 22px;border-radius:999px;font-size:13.5px;font-weight:700;color:var(--text-muted);transition:all .25s ease;}
+.tab-btn.is-active{background:var(--blue);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.is-active{display:grid;}
+.content-grid{grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:26px;}
+
+.facade-figure{position:relative;aspect-ratio:4/3;background:var(--bg-soft);overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding:22px;}
+.facade-graphic{position:relative;display:flex;flex-direction:column;align-items:center;}
+.facade-graphic.mirror{transform:scaleX(-1);}
+.roof-gable{width:0;height:0;border-inline-start:58px solid transparent;border-inline-end:58px solid transparent;border-bottom:34px solid var(--text);opacity:.88;}
+.roof-flat{width:128px;height:12px;background:var(--text);opacity:.88;}
+.facade-body{width:128px;background:rgba(46,111,158,.07);border:1.8px solid var(--text);display:grid;gap:7px;padding:12px;position:relative;}
+.facade-body.rows2{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);height:78px;}
+.facade-body.rows3{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);height:96px;}
+.win{border:1.4px solid var(--text);background:rgba(185,138,70,.18);}
+.facade-door{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:30px;border:1.4px solid var(--text);border-bottom:none;background:rgba(185,138,70,.22);}
+.content-body{padding:20px;}
+.content-body h3{font-size:15.5px;margin-bottom:8px;}
+.content-body p{font-size:13.5px;color:var(--text-muted);margin-bottom:14px;}
+.content-foot{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);}
+.free-badge{position:absolute;bottom:12px;inset-inline-start:12px;background:var(--ink);color:var(--paper);font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;z-index:4;display:flex;align-items:center;gap:5px;}
+.free-badge .icon{width:12px;height:12px;}
+
+/* ============ TESTIMONIALS ============ */
+.notes-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;}
+.note-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);
+  padding:30px 26px 24px;box-shadow:var(--shadow);
+}
+.note-card:nth-child(1){transform:rotate(-1.4deg);}
+.note-card:nth-child(2){transform:rotate(1deg);}
+.note-card:nth-child(3){transform:rotate(-.6deg);}
+.note-pin{position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;background:var(--brass);box-shadow:0 3px 6px rgba(0,0,0,.25);}
+.note-quote{font-size:14.5px;color:var(--text);margin-bottom:20px;}
+.note-person{display:flex;align-items:center;gap:12px;}
+.avatar-init{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:13px;flex-shrink:0;}
+.note-person b{display:block;font-size:13.5px;}
+.note-person span{font-size:12px;color:var(--text-muted);}
+
+/* ============ NEWSLETTER ============ */
+.newsletter{background:var(--ink);color:var(--paper);border-radius:var(--radius-l);padding:52px 44px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;position:relative;overflow:hidden;}
+.newsletter::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,178,214,.18) 1px, transparent 1px);background-size:16px 16px;opacity:.5;}
+.newsletter-copy{position:relative;z-index:1;max-width:420px;}
+.newsletter-copy h3{font-size:24px;margin-bottom:10px;}
+.newsletter-copy p{font-size:13.5px;color:rgba(241,236,222,.65);}
+.sign-line{position:relative;z-index:1;display:flex;gap:0;border-bottom:1.5px dashed rgba(241,236,222,.4);padding-bottom:12px;min-width:320px;flex:1;max-width:420px;}
+.sign-line input{background:transparent;border:none;color:var(--paper);flex:1;font-size:14px;padding-inline-end:10px;}
+.sign-line input::placeholder{color:rgba(241,236,222,.45);}
+.sign-line button{color:var(--brass-light);font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sign-line button .icon{width:15px;height:15px;}
+
+/* ============ FOOTER ============ */
+footer{background:var(--ink);color:rgba(241,236,222,.75);padding-top:70px;}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.1fr;gap:40px;padding-bottom:50px;border-bottom:1px solid rgba(241,236,222,.12);}
+.footer-brand p{font-size:13.5px;color:rgba(241,236,222,.55);margin-top:14px;max-width:280px;}
+.social-row{display:flex;gap:10px;margin-top:20px;}
+.social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(241,236,222,.2);display:flex;align-items:center;justify-content:center;transition:border-color .25s ease, transform .25s ease;}
+.social-row a:hover{border-color:var(--brass-light);transform:translateY(-3px);}
+.social-row .icon{width:16px;height:16px;}
+footer h4{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.08em;color:var(--brass-light);margin-bottom:18px;text-transform:uppercase;}
+.footer-links li{margin-bottom:11px;}
+.footer-links a{font-size:13.5px;color:rgba(241,236,222,.65);transition:color .2s ease;}
+.footer-links a:hover{color:var(--paper);}
+.footer-contact li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(241,236,222,.65);margin-bottom:14px;}
+.footer-contact .icon{width:15px;height:15px;color:var(--brass-light);flex-shrink:0;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-block:22px;font-size:12px;color:rgba(241,236,222,.45);flex-wrap:wrap;gap:10px;}
+
+/* ============ SKELETON LOADING ============ */
+.skeleton-overlay{
+  position:absolute;inset:0;z-index:6;background:var(--bg-soft);
+  overflow:hidden;opacity:1;transition:opacity .6s ease;pointer-events:none;
+}
+.skeleton-overlay::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+  background-size:200% 100%;animation:shimmer 1.3s infinite;
+}
+[data-theme="dark"] .skeleton-overlay::after{background:linear-gradient(100deg, transparent 30%, rgba(241,236,222,.12) 50%, transparent 70%);}
+@keyframes shimmer{from{background-position:150% 0;}to{background-position:-50% 0;}}
+body.is-loaded .skeleton-overlay{opacity:0;}
+
+/* ============ AUTH VIEW ============ */
+#auth-view.is-hidden{display:none;}
+#auth-view{animation:viewFade .55s ease;}
+@keyframes viewFade{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.auth-shell{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+.auth-visual{background:var(--ink);color:var(--paper);position:relative;overflow:hidden;padding:44px;display:flex;flex-direction:column;justify-content:space-between;}
+.auth-visual .grid-paper-dark{position:absolute;inset:0;}
+.auth-visual-mid{position:relative;z-index:2;flex:1;display:flex;align-items:center;justify-content:center;}
+.auth-visual-mid svg{width:70%;max-width:280px;}
+.auth-quote{position:relative;z-index:2;max-width:360px;}
+.auth-quote p{font-size:19px;font-weight:600;line-height:1.6;margin-bottom:10px;}
+.auth-quote span{font-family:var(--font-mono);font-size:12px;color:rgba(241,236,222,.55);}
+.back-home{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--paper);width:fit-content;}
+.back-home .icon{width:16px;height:16px;}
+
+.auth-panel{display:flex;align-items:center;justify-content:center;padding:44px 28px;background:var(--bg);}
+.auth-card{width:100%;max-width:400px;}
+.auth-card .brand{margin-bottom:34px;}
+.auth-tabs{position:relative;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px;margin-bottom:30px;}
+.auth-tab-btn{flex:1;padding:11px;border-radius:999px;font-weight:700;font-size:14px;color:var(--text-muted);position:relative;z-index:2;transition:color .3s ease;}
+.auth-tab-btn.is-active{color:#fff;}
+.auth-tab-indicator{position:absolute;top:6px;bottom:6px;inset-inline-start:0%;width:50%;background:var(--blue);border-radius:999px;transition:inset-inline-start .4s cubic-bezier(.22,1,.36,1);z-index:1;}
+
+.auth-form{display:none;flex-direction:column;gap:18px;}
+.auth-form.is-active{display:flex;}
+.field{position:relative;}
+.field input{
+  width:100%;padding:16px 16px 8px;border:1px solid var(--border-strong);border-radius:var(--radius-s);
+  background:color-mix(in srgb, var(--surface) 60%, transparent);backdrop-filter:blur(6px);
+  color:var(--text);font-size:14.5px;transition:border-color .25s ease, background .25s ease;
+}
+.field input:focus{border-color:var(--blue);background:var(--surface);}
+.field label{
+  position:absolute;top:14px;inset-inline-start:16px;font-size:14.5px;color:var(--text-muted);
+  pointer-events:none;transition:all .2s ease;background:transparent;
+}
+.field input:focus + label,.field input:not(:placeholder-shown) + label{
+  top:6px;font-size:10.5px;color:var(--blue);letter-spacing:.03em;
+}
+.field-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;}
+.field-row a{color:var(--blue);font-weight:600;}
+.check-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-muted);}
+.check-row input{width:16px;height:16px;accent-color:var(--blue);}
+.auth-submit{width:100%;margin-top:6px;}
+.auth-switch{margin-top:26px;text-align:center;font-size:13px;color:var(--text-muted);}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:980px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-visual{order:-1;padding-block:20px;}
+  .hero-visual svg{max-width:280px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .auth-shell{grid-template-columns:1fr;}
+  .auth-visual{display:none;}
+}
+@media (max-width:760px){
+  .nav-links{display:none;}
+  .menu-toggle{display:flex;}
+  .mobile-panel.is-open{display:flex;flex-direction:column;gap:4px;padding:16px 28px 22px;border-top:1px solid var(--border);}
+  .mobile-panel a{padding:12px 0;font-weight:600;border-bottom:1px solid var(--border);font-size:14.5px;}
+  .dim-row{flex-direction:column;}
+  .dim-item{border-inline-start:none;border-top:1px dashed rgba(241,236,222,.2);}
+  .dim-item:first-child{border-top:none;}
+  .section{padding:64px 0;}
+  .newsletter{flex-direction:column;align-items:flex-start;padding:36px 26px;}
+  .sign-line{width:100%;min-width:0;}
+  .footer-grid{grid-template-columns:1fr;gap:34px;}
+}
+</style>
+</head>
+<body class="is-loading">
+
+<!-- ============ SVG SPRITE ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="ic-compass" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M20 8 L23 20 L20 32 L17 20 Z" fill="currentColor" opacity=".9"/><circle cx="20" cy="20" r="2" fill="currentColor"/></symbol>
+<symbol id="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+<symbol id="ic-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></symbol>
+<symbol id="ic-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+<symbol id="ic-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+<symbol id="ic-arrow" viewBox="0 0 24 24"><path d="M17 7L7 17M7 7h10v10"/></symbol>
+<symbol id="ic-down" viewBox="0 0 24 24"><path d="M12 4v14M6 13l6 5 6-5"/></symbol>
+<symbol id="ic-ruler" viewBox="0 0 24 24"><path d="M3 16 16 3l5 5L8 21 3 16Z"/><path d="M13 6l2 2M9 10l2 2M17 10l2 2"/></symbol>
+<symbol id="ic-cube" viewBox="0 0 24 24"><path d="M12 3 3 8v8l9 5 9-5V8l-9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+<symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17Z"/><path d="M4 19a2.5 2.5 0 0 1 2.5-2.5H20"/></symbol>
+<symbol id="ic-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 9 9 0 0 1-3.1-.6L3 21l1.7-5.1A8.4 8.4 0 1 1 21 11.5Z"/></symbol>
+<symbol id="ic-insta" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></symbol>
+<symbol id="ic-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"/></symbol>
+<symbol id="ic-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 6l9 7 9-7"/></symbol>
+<symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 3v13M6.5 11.5 12 17l5.5-5.5"/><path d="M4 21h16"/></symbol>
+<symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2.5l3 6.4 6.8.8-5 4.9 1.3 6.9L12 18l-6.1 3.5L7.2 14.6l-5-4.9 6.8-.8L12 2.5Z"/></symbol>
+<symbol id="ic-scale" viewBox="0 0 24 24"><path d="M4 20h16M12 4v16M4 8l4-4 4 4M16 8l4-4"/></symbol>
+<symbol id="ic-north" viewBox="0 0 24 24"><path d="M12 2v20M12 2l-4 6M12 2l4 6"/></symbol>
+<symbol id="ic-plan" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18M3 7h6M15 17h6"/></symbol>
+</defs>
+</svg>
+
+<div class="scroll-progress"></div>
+
+<!-- ============ HOME VIEW ============ -->
+<div id="home-view">
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="#" class="brand" aria-label="دنیز آرک - صفحه اصلی">
+      <svg class="icon compass-mark"><use href="#ic-compass"/></svg>
+      <div class="brand-text">
+        <span class="en ltr">DENIZ ARCH</span>
+        <span class="fa">مهندسی طرح، نقش و سازه</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="#hero">صفحه اصلی</a>
+      <a href="#products">پلان‌ها</a>
+      <a href="#content">آموزش و مطالب</a>
+      <a href="#testimonials">نظرات</a>
+      <a href="#footer">تماس با ما</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="تغییر پوسته روشن/تاریک">
+        <svg class="icon sun"><use href="#ic-sun"/></svg>
+        <svg class="icon moon"><use href="#ic-moon"/></svg>
+      </button>
+      <a href="#" class="btn btn-primary btn-sm magnetic auth-link">ورود / ثبت‌نام</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="منو">
+        <svg class="icon"><use href="#ic-menu"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-panel wrap" id="mobilePanel">
+    <a href="#hero">صفحه اصلی</a>
+    <a href="#products">پلان‌ها</a>
+    <a href="#content">آموزش و مطالب</a>
+    <a href="#testimonials">نظرات</a>
+    <a href="#footer">تماس با ما</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="grid-paper-dark"></div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow ltr">STUDIO NO.04 — DRAFTING BUREAU</span>
+        <h1>هر خط، پیش از آنکه <em>دیوار</em> شود،<br>اینجا کشیده می‌شود</h1>
+        <p>پلان‌های اجرایی آماده، بانک آبجکت حرفه‌ای و دوره‌های آموزشی معماری؛ برای مهندسانی که دقت را دوست دارند.</p>
+        <div class="hero-actions">
+          <a href="#products" class="btn btn-brass magnetic">مشاهده پلان‌ها <svg class="icon" style="width:16px;height:16px"><use href="#ic-arrow"/></svg></a>
+          <a href="#content" class="btn btn-ghost-light magnetic">شروع آموزش رایگان</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <use href="#ic-compass" class="compass-rose" width="110" height="110" x="0" y="0" color="var(--brass-light)"/>
+          <!-- ground / dimension line -->
+          <line x1="70" y1="215" x2="230" y2="215" class="iso-path" style="animation-delay:1.6s"/>
+          <line x1="70" y1="209" x2="70" y2="221" class="iso-path" style="animation-delay:1.6s"/>
+          <line x1="230" y1="209" x2="230" y2="221" class="iso-path" style="animation-delay:1.6s"/>
+          <!-- cube A -->
+          <path d="M115,140 L150,118 L185,140 L150,162 Z" class="iso-fill" style="fill:var(--brass-light);animation-delay:.9s" />
+          <path d="M115,140 L150,162 L150,222 L115,200 Z" class="iso-fill" style="fill:var(--blue-light);opacity:.35;animation-delay:1s"/>
+          <path d="M185,140 L150,162 L150,222 L185,200 Z" class="iso-fill" style="fill:var(--blue-light);opacity:.18;animation-delay:1.05s"/>
+          <path d="M115,140 L150,118 L185,140 L150,162 Z" class="iso-path" style="animation-delay:0s"/>
+          <path d="M115,140 L150,162 L150,222 L115,200 Z" class="iso-path" style="animation-delay:.15s"/>
+          <path d="M185,140 L150,162 L150,222 L185,200 Z" class="iso-path" style="animation-delay:.3s"/>
+          <!-- cube B (stacked) -->
+          <path d="M141,64 L165,50 L189,64 L165,78 Z" class="iso-fill" style="fill:var(--brass-light);animation-delay:1.3s"/>
+          <path d="M141,64 L165,78 L165,114 L141,100 Z" class="iso-fill" style="fill:var(--blue-light);opacity:.35;animation-delay:1.4s"/>
+          <path d="M189,64 L165,78 L165,114 L189,100 Z" class="iso-fill" style="fill:var(--blue-light);opacity:.18;animation-delay:1.45s"/>
+          <path d="M141,64 L165,50 L189,64 L165,78 Z" class="iso-path" style="animation-delay:.55s"/>
+          <path d="M141,64 L165,78 L165,114 L141,100 Z" class="iso-path" style="animation-delay:.7s"/>
+          <path d="M189,64 L165,78 L165,114 L189,100 Z" class="iso-path" style="animation-delay:.85s"/>
+        </svg>
+      </div>
+    </div>
+    <a href="#products" class="scroll-cue">
+      <svg class="icon"><use href="#ic-down"/></svg>
+      برای کاوش پایین بروید
+    </a>
+  </div>
+
+  <div class="dim-strip">
+    <div class="wrap dim-row">
+      <div class="dim-item"><b class="ltr">12+</b><span>سال تجربه اجرایی</span></div>
+      <div class="dim-item"><b class="ltr">340+</b><span>پلان آماده و تست‌شده</span></div>
+      <div class="dim-item"><b class="ltr">2,500+</b><span>دانشجوی دوره‌های آموزشی</span></div>
+      <div class="dim-item"><b class="ltr">4.9 / 5</b><span>رضایت مشتریان</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICE CHIPS ============ -->
+<section class="chip-strip">
+  <div class="wrap chip-row reveal">
+    <a href="#products" class="chip"><svg class="icon"><use href="#ic-plan"/></svg> پلان‌های مسکونی</a>
+    <a href="#" class="chip"><svg class="icon"><use href="#ic-cube"/></svg> بانک آبجکت سه‌بعدی</a>
+    <a href="#content" class="chip"><svg class="icon"><use href="#ic-book"/></svg> آموزش معماری</a>
+    <a href="#" class="chip"><svg class="icon"><use href="#ic-chat"/></svg> مشاوره طراحی</a>
+    <a href="#" class="chip"><svg class="icon"><use href="#ic-ruler"/></svg> نقشه‌های اجرایی</a>
+  </div>
+</section>
+
+<!-- ============ PRODUCTS ============ -->
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow ltr">COLLECTION — پرفروش‌ترین‌ها</span>
+        <h2 style="margin-top:14px;">پلان‌های آماده‌ی اجرا</h2>
+      </div>
+      <p>هر پلان با محاسبات سازه، نقشه تاسیسات و رندر داخلی همراه است و آماده‌ی دریافت پروانه ساخت تحویل داده می‌شود.</p>
+    </div>
+
+    <div class="filter-row reveal">
+      <button class="filter-chip is-active" data-filter="all">همه پلان‌ها</button>
+      <button class="filter-chip" data-filter="single">تک‌خوابه</button>
+      <button class="filter-chip" data-filter="double">دوخوابه</button>
+      <button class="filter-chip" data-filter="duplex">دوبلکس</button>
+      <button class="filter-chip" data-filter="villa">ویلایی</button>
+      <button class="filter-chip" data-filter="multi">چندطبقه</button>
+    </div>
+
+    <div class="product-grid tilt-stage">
+
+      <!-- CARD 1 -->
+      <article class="product-card tilt-card reveal" data-type="single">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic">
+            <div class="room" style="inset-inline-start:8%;top:14%;width:38%;height:40%;"></div>
+            <div class="room" style="inset-inline-start:50%;top:14%;width:42%;height:24%;"></div>
+            <div class="room" style="inset-inline-start:50%;top:42%;width:42%;height:34%;"></div>
+            <div class="room" style="inset-inline-start:8%;top:58%;width:38%;height:24%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-014</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <span class="product-badge tilt-layer" data-depth="26">پرفروش</span>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان تک‌خوابه شمالی</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۹۵ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۸ (۱۲۰)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۱۴۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 2 -->
+      <article class="product-card tilt-card reveal reveal-delay-1" data-type="duplex">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic mirror">
+            <div class="room" style="inset-inline-start:6%;top:10%;width:26%;height:30%;"></div>
+            <div class="room" style="inset-inline-start:34%;top:10%;width:60%;height:20%;"></div>
+            <div class="room" style="inset-inline-start:34%;top:32%;width:28%;height:50%;"></div>
+            <div class="room" style="inset-inline-start:64%;top:32%;width:30%;height:50%;"></div>
+            <div class="room" style="inset-inline-start:6%;top:42%;width:26%;height:40%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-027</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <span class="product-badge tilt-layer" data-depth="26">جدید</span>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان دوبلکس نئوکلاسیک</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۲۲۰ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۹ (۸۶)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۳۹۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="product-card tilt-card reveal reveal-delay-2" data-type="villa">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic">
+            <div class="room" style="inset-inline-start:10%;top:12%;width:34%;height:34%;"></div>
+            <div class="room" style="inset-inline-start:48%;top:12%;width:42%;height:22%;"></div>
+            <div class="room" style="inset-inline-start:48%;top:38%;width:42%;height:22%;"></div>
+            <div class="room" style="inset-inline-start:10%;top:50%;width:34%;height:34%;"></div>
+            <div class="room" style="inset-inline-start:48%;top:64%;width:42%;height:20%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-031</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان ویلایی مدرن</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۳۱۰ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۷ (۵۴)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۴۵۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 4 -->
+      <article class="product-card tilt-card reveal" data-type="double">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic mirror">
+            <div class="room" style="inset-inline-start:8%;top:16%;width:40%;height:36%;"></div>
+            <div class="room" style="inset-inline-start:52%;top:16%;width:40%;height:36%;"></div>
+            <div class="room" style="inset-inline-start:8%;top:56%;width:84%;height:28%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-009</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان دو خوابه جنوبی</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۱۴۰ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۶ (۹۸)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۱۹۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 5 -->
+      <article class="product-card tilt-card reveal reveal-delay-1" data-type="multi">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic">
+            <div class="room" style="inset-inline-start:6%;top:8%;width:26%;height:26%;"></div>
+            <div class="room" style="inset-inline-start:36%;top:8%;width:26%;height:26%;"></div>
+            <div class="room" style="inset-inline-start:66%;top:8%;width:28%;height:26%;"></div>
+            <div class="room" style="inset-inline-start:6%;top:38%;width:88%;height:20%;"></div>
+            <div class="room" style="inset-inline-start:6%;top:62%;width:42%;height:30%;"></div>
+            <div class="room" style="inset-inline-start:52%;top:62%;width:42%;height:30%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-044</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <span class="product-badge tilt-layer" data-depth="26">پیشنهادی</span>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان سه‌طبقه مسکونی</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۴۸۰ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۹ (۳۱)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۶۹۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 6 -->
+      <article class="product-card tilt-card reveal reveal-delay-2" data-type="single">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="plan-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="plan-graphic mirror">
+            <div class="room" style="inset-inline-start:14%;top:14%;width:72%;height:44%;"></div>
+            <div class="room" style="inset-inline-start:14%;top:62%;width:34%;height:24%;"></div>
+            <div class="room" style="inset-inline-start:52%;top:62%;width:34%;height:24%;"></div>
+          </div>
+          <span class="plan-tag"><svg class="icon"><use href="#ic-plan"/></svg> PLAN-002</span>
+          <span class="plan-north"><svg class="icon"><use href="#ic-north"/></svg>N</span>
+        </div>
+        <div class="product-body tilt-layer" data-depth="18">
+          <h3>پلان استودیو کوچک</h3>
+          <div class="product-meta">
+            <span><svg class="icon"><use href="#ic-scale"/></svg> ۶۰ متر</span>
+            <span><svg class="icon"><use href="#ic-star"/></svg> ۴.۵ (۷۰)</span>
+          </div>
+          <div class="product-foot">
+            <span class="price">۹۹,۰۰۰<sup>تومان</sup></span>
+            <button class="icon-btn" aria-label="افزودن به سبد"><svg class="icon"><use href="#ic-arrow"/></svg></button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTENT TABS ============ -->
+<section class="section" id="content" style="background:var(--bg-soft);">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow ltr">FIELD NOTES</span>
+        <h2 style="margin-top:14px;">مطالب و آموزش‌های معماری</h2>
+      </div>
+      <p>یادداشت‌های فنی تیم دنیز آرک و دوره‌های رایگان برای یادگیری طراحی نما، سازه و جزئیات اجرایی.</p>
+    </div>
+
+    <div class="tab-row reveal">
+      <button class="tab-btn is-active" data-tab="articles">آخرین مطالب</button>
+      <button class="tab-btn" data-tab="courses">آموزش رایگان</button>
+    </div>
+
+    <div class="tab-panel content-grid is-active tilt-stage" data-panel="articles">
+      <article class="tilt-card reveal">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic"><div class="roof-gable"></div><div class="facade-body rows2"><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="facade-door"></div></div></div>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>طراحی نمای کلاسیک معماری</h3>
+          <p>اصول تناسب و ریتم در نماهای کلاسیک و چگونگی هماهنگی آن‌ها با پلان داخلی ساختمان.</p>
+          <div class="content-foot"><span>۸ دقیقه مطالعه</span><span>۱۴۰۴/۰۴/۲۰</span></div>
+        </div>
+      </article>
+      <article class="tilt-card reveal reveal-delay-1">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic mirror"><div class="roof-flat"></div><div class="facade-body rows3">
+            <div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div>
+            <div class="facade-door"></div></div></div>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>گچ‌بری و جزئیات تزئینی سقف</h3>
+          <p>نکات اجرایی گچ‌بری کلاسیک، انتخاب قالب مناسب و هماهنگی با ارتفاع سقف.</p>
+          <div class="content-foot"><span>۶ دقیقه مطالعه</span><span>۱۴۰۴/۰۴/۱۲</span></div>
+        </div>
+      </article>
+      <article class="tilt-card reveal reveal-delay-2">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic"><div class="roof-gable"></div><div class="facade-body rows2"><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="facade-door"></div></div></div>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>نمای مسکونی با سنگ و آجر</h3>
+          <p>ترکیب متریال سنگ و آجر نما و تاثیر آن بر عایق‌بندی حرارتی نمای ساختمان.</p>
+          <div class="content-foot"><span>۵ دقیقه مطالعه</span><span>۱۴۰۴/۰۳/۳۰</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="tab-panel content-grid tilt-stage" data-panel="courses">
+      <article class="tilt-card reveal">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic mirror"><div class="roof-gable"></div><div class="facade-body rows2"><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="facade-door"></div></div></div>
+          <span class="free-badge"><svg class="icon"><use href="#ic-download"/></svg> رایگان</span>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>دوره مقدماتی رسم پلان اجرایی</h3>
+          <p>شروع یادگیری خواندن و رسم پلان از پایه، ویژه ورودی‌های جدید معماری.</p>
+          <div class="content-foot"><span>۱۲ جلسه</span><span>۳ ساعت</span></div>
+        </div>
+      </article>
+      <article class="tilt-card reveal reveal-delay-1">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic"><div class="roof-flat"></div><div class="facade-body rows3"><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="facade-door"></div></div></div>
+          <span class="free-badge"><svg class="icon"><use href="#ic-download"/></svg> رایگان</span>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>مبانی سازه برای معماران</h3>
+          <p>آشنایی با بارگذاری، دهانه‌ها و انتخاب سیستم سازه‌ای مناسب برای پلان.</p>
+          <div class="content-foot"><span>۸ جلسه</span><span>۲.۵ ساعت</span></div>
+        </div>
+      </article>
+      <article class="tilt-card reveal reveal-delay-2">
+        <span class="corner-mark tl"></span><span class="corner-mark tr"></span><span class="corner-mark bl"></span><span class="corner-mark br"></span>
+        <div class="facade-figure tilt-layer" data-depth="14">
+          <div class="skeleton-overlay"></div>
+          <div class="facade-graphic mirror"><div class="roof-gable"></div><div class="facade-body rows2"><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="facade-door"></div></div></div>
+          <span class="free-badge"><svg class="icon"><use href="#ic-download"/></svg> رایگان</span>
+        </div>
+        <div class="content-body tilt-layer" data-depth="18">
+          <h3>بانک آبجکت: مدل‌سازی سریع نما</h3>
+          <p>استفاده حرفه‌ای از بانک آبجکت برای پرسپکتیو و رندر سریع نمای پروژه.</p>
+          <div class="content-foot"><span>۶ جلسه</span><span>۱.۵ ساعت</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow ltr">ON THE BOARD</span>
+        <h2 style="margin-top:14px;">یادداشت مهندسان همکار</h2>
+      </div>
+    </div>
+    <div class="notes-row">
+      <div class="note-card reveal"><span class="note-pin"></span>
+        <p class="note-quote">پلان‌هایی که از دنیز آرک گرفتم دقیقاً با محاسبات سازه هماهنگ بودن، هیچ اصلاحی لازم نشد.</p>
+        <div class="note-person"><span class="avatar-init">آر</span><div><b>مهندس آرمین رضایی</b><span>معمار پروژه‌های مسکونی</span></div></div>
+      </div>
+      <div class="note-card reveal reveal-delay-1"><span class="note-pin"></span>
+        <p class="note-quote">دوره‌ی آموزشی خیلی کاربردی بود، همون هفته اول رو پروژه واقعی پیاده‌ش کردم.</p>
+        <div class="note-person"><span class="avatar-init">سک</span><div><b>سارا کریمی</b><span>دانشجوی معماری</span></div></div>
+      </div>
+      <div class="note-card reveal reveal-delay-2"><span class="note-pin"></span>
+        <p class="note-quote">پشتیبانی سریع و بانک آبجکتش برای رندر گرفتن زمان زیادی رو برام صرفه‌جویی کرد.</p>
+        <div class="note-person"><span class="avatar-init">بت</span><div><b>بهنام توکلی</b><span>طراح داخلی</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEWSLETTER ============ -->
+<section class="wrap" style="padding-bottom:100px;">
+  <div class="newsletter reveal">
+    <div class="newsletter-copy">
+      <h3>امضای نقشه</h3>
+      <p>ایمیل‌تان را اینجا امضا کنید تا پلان‌های جدید و آموزش‌های رایگان اول از همه دست شما برسد.</p>
+    </div>
+    <form class="sign-line" id="newsletterForm">
+      <input type="email" placeholder="you@email.com" class="ltr" required>
+      <button type="submit">عضویت <svg class="icon"><use href="#ic-arrow"/></svg></button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer id="footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="brand"><svg class="icon compass-mark" style="color:var(--brass-light)"><use href="#ic-compass"/></svg>
+        <div class="brand-text"><span class="en ltr" style="color:var(--paper)">DENIZ ARCH</span><span class="fa" style="color:rgba(241,236,222,.55)">مهندسی طرح، نقش و سازه</span></div>
+      </a>
+      <p>استودیوی طراحی و مهندسی معماری دنیز؛ از خط اول پلان تا تحویل نقشه اجرایی، کنار مهندسان و سازندگان.</p>
+      <div class="social-row">
+        <a href="#" aria-label="اینستاگرام"><svg class="icon"><use href="#ic-insta"/></svg></a>
+        <a href="#" aria-label="تماس تلفنی"><svg class="icon"><use href="#ic-phone"/></svg></a>
+        <a href="#" aria-label="ایمیل"><svg class="icon"><use href="#ic-mail"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <h4 class="ltr">QUICK LINKS</h4>
+      <ul class="footer-links">
+        <li><a href="#hero">صفحه اصلی</a></li>
+        <li><a href="#products">پلان‌ها</a></li>
+        <li><a href="#content">آموزش و مطالب</a></li>
+        <li><a href="#">بانک آبجکت</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="ltr">SERVICES</h4>
+      <ul class="footer-links">
+        <li><a href="#">طراحی معماری</a></li>
+        <li><a href="#">محاسبات سازه</a></li>
+        <li><a href="#">مشاوره طراحی</a></li>
+        <li><a href="#">نظارت اجرا</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="ltr">CONTACT</h4>
+      <ul class="footer-contact">
+        <li><svg class="icon"><use href="#ic-mail"/></svg><span class="ltr">deniz.engineering@gmail.com</span></li>
+        <li><svg class="icon"><use href="#ic-phone"/></svg><span class="ltr">+98 21 9128 4470</span></li>
+        <li><svg class="icon"><use href="#ic-compass"/></svg><span>اصفهان، خیابان نقش جهان</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© ۱۴۰۴ دنیز آرک. تمامی حقوق محفوظ است.</span>
+    <span class="ltr">Crafted on the drafting table.</span>
+  </div>
+</footer>
+
+</div>
+<!-- ============ END HOME VIEW ============ -->
+
+
+<!-- ============ AUTH VIEW ============ -->
+<div id="auth-view" class="is-hidden">
+  <div class="auth-shell">
+    <div class="auth-visual">
+      <div class="grid-paper-dark"></div>
+      <a href="#" class="back-home"><svg class="icon"><use href="#ic-arrow" style="transform:scaleX(-1)"/></svg> بازگشت به صفحه اصلی</a>
+      <div class="auth-visual-mid">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <use href="#ic-compass" width="90" height="90" x="105" y="4" color="var(--brass-light)" style="opacity:.6"/>
+          <path d="M115,140 L150,118 L185,140 L150,162 Z" style="fill:var(--brass-light)"/>
+          <path d="M115,140 L150,162 L150,222 L115,200 Z" style="fill:var(--blue-light);opacity:.35"/>
+          <path d="M185,140 L150,162 L150,222 L185,200 Z" style="fill:var(--blue-light);opacity:.18"/>
+          <path d="M115,140 L150,118 L185,140 L150,162 Z" style="stroke:var(--brass-light);stroke-width:1.6;fill:none"/>
+          <path d="M115,140 L150,162 L150,222 L115,200 Z" style="stroke:var(--brass-light);stroke-width:1.6;fill:none"/>
+          <path d="M185,140 L150,162 L150,222 L185,200 Z" style="stroke:var(--brass-light);stroke-width:1.6;fill:none"/>
+          <line x1="70" y1="235" x2="230" y2="235" style="stroke:var(--brass-light);stroke-width:1.4"/>
+          <line x1="70" y1="229" x2="70" y2="241" style="stroke:var(--brass-light);stroke-width:1.4"/>
+          <line x1="230" y1="229" x2="230" y2="241" style="stroke:var(--brass-light);stroke-width:1.4"/>
+        </svg>
+      </div>
+      <div class="auth-quote">
+        <p>«طراحی خوب، همیشه از یک خط دقیق شروع می‌شود.»</p>
+        <span class="ltr">— DENIZ ARCH STUDIO</span>
+      </div>
+    </div>
+
+    <div class="auth-panel">
+      <div class="auth-card">
+        <a href="#" class="brand">
+          <svg class="icon compass-mark"><use href="#ic-compass"/></svg>
+          <div class="brand-text"><span class="en ltr">DENIZ ARCH</span><span class="fa">مهندسی طرح، نقش و سازه</span></div>
+        </a>
+
+        <div class="auth-tabs">
+          <div class="auth-tab-indicator" id="authIndicator"></div>
+          <button class="auth-tab-btn is-active" data-auth-tab="login">ورود</button>
+          <button class="auth-tab-btn" data-auth-tab="signup">ثبت‌نام</button>
+        </div>
+
+        <form class="auth-form is-active" data-form="login" id="loginForm">
+          <div class="field"><input type="text" id="loginId" placeholder=" " required><label for="loginId">ایمیل یا شماره موبایل</label></div>
+          <div class="field"><input type="password" id="loginPass" placeholder=" " required><label for="loginPass">رمز عبور</label></div>
+          <div class="field-row">
+            <label class="check-row"><input type="checkbox"> مرا به خاطر بسپار</label>
+            <a href="#">رمز عبور را فراموش کرده‌اید؟</a>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit magnetic">ورود به حساب کاربری</button>
+        </form>
+
+        <form class="auth-form" data-form="signup" id="signupForm">
+          <div class="field"><input type="text" id="suName" placeholder=" " required><label for="suName">نام و نام خانوادگی</label></div>
+          <div class="field"><input type="text" id="suPhone" placeholder=" " required><label for="suPhone">شماره موبایل</label></div>
+          <div class="field"><input type="email" id="suEmail" placeholder=" " required><label for="suEmail">ایمیل</label></div>
+          <div class="field"><input type="password" id="suPass" placeholder=" " required><label for="suPass">رمز عبور</label></div>
+          <label class="check-row"><input type="checkbox" required> قوانین و حریم خصوصی را می‌پذیرم</label>
+          <button type="submit" class="btn btn-primary auth-submit magnetic">ساخت حساب کاربری</button>
+        </form>
+
+        <p class="auth-switch" id="authSwitchText">
+          حساب کاربری ندارید؟ <a href="#" id="switchToSignup" style="color:var(--blue);font-weight:700;">ثبت‌نام کنید</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ============ END AUTH VIEW ============ -->
+
+<script>
+(function(){
+  const root = document.documentElement;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- THEME ---------- */
+  let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  function applyTheme(){
+    root.setAttribute('data-theme', theme);
+    document.querySelectorAll('#themeToggle').forEach(b=>b.setAttribute('aria-pressed', theme==='dark'));
+  }
+  applyTheme();
+  document.getElementById('themeToggle').addEventListener('click', ()=>{
+    theme = theme === 'dark' ? 'light' : 'dark';
+    applyTheme();
+  });
+
+  /* ---------- MOBILE MENU ---------- */
+  const menuToggle = document.getElementById('menuToggle');
+  const mobilePanel = document.getElementById('mobilePanel');
+  menuToggle.addEventListener('click', ()=>{
+    mobilePanel.classList.toggle('is-open');
+  });
+  mobilePanel.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>mobilePanel.classList.remove('is-open')));
+
+  /* ---------- VIEW SWITCH (home / auth) ---------- */
+  const homeView = document.getElementById('home-view');
+  const authView = document.getElementById('auth-view');
+  function showView(name){
+    homeView.classList.toggle('is-hidden', name !== 'home');
+    authView.classList.toggle('is-hidden', name !== 'auth');
+    window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'});
+  }
+  document.querySelectorAll('.auth-link, #switchToSignup ~ *').forEach(()=>{});
+  document.querySelectorAll('.auth-link').forEach(a=>a.addEventListener('click', e=>{e.preventDefault(); showView('auth');}));
+  document.querySelectorAll('.back-home').forEach(a=>a.addEventListener('click', e=>{e.preventDefault(); showView('home');}));
+
+  /* ---------- AUTH TABS ---------- */
+  const authTabBtns = document.querySelectorAll('.auth-tab-btn');
+  const authForms = document.querySelectorAll('.auth-form');
+  const authIndicator = document.getElementById('authIndicator');
+  const authSwitchText = document.getElementById('authSwitchText');
+  function setAuthTab(name){
+    authTabBtns.forEach(b=>b.classList.toggle('is-active', b.dataset.authTab === name));
+    authForms.forEach(f=>f.classList.toggle('is-active', f.dataset.form === name));
+    authIndicator.style.insetInlineStart = name === 'login' ? '0%' : '50%';
+    authSwitchText.innerHTML = name === 'login'
+      ? 'حساب کاربری ندارید؟ <a href="#" id="switchToSignup" style="color:var(--blue);font-weight:700;">ثبت‌نام کنید</a>'
+      : 'قبلاً ثبت‌نام کرده‌اید؟ <a href="#" id="switchToLogin" style="color:var(--blue);font-weight:700;">وارد شوید</a>';
+    bindSwitchLinks();
+  }
+  authTabBtns.forEach(btn=>btn.addEventListener('click', ()=>setAuthTab(btn.dataset.authTab)));
+  function bindSwitchLinks(){
+    const su = document.getElementById('switchToSignup');
+    const sl = document.getElementById('switchToLogin');
+    if(su) su.addEventListener('click', e=>{e.preventDefault(); setAuthTab('signup');});
+    if(sl) sl.addEventListener('click', e=>{e.preventDefault(); setAuthTab('login');});
+  }
+  bindSwitchLinks();
+
+  /* ---------- SCROLL PROGRESS ---------- */
+  const progressBar = document.querySelector('.scroll-progress');
+  function updateProgress(){
+    const h = document.documentElement;
+    const height = h.scrollHeight - h.clientHeight;
+    const pct = height > 0 ? h.scrollTop / height : 0;
+    progressBar.style.transform = `scaleX(${pct})`;
+  }
+  window.addEventListener('scroll', ()=>requestAnimationFrame(updateProgress), {passive:true});
+
+  /* ---------- TILT CARDS (3D "toward you" parallax) ---------- */
+  if(!reduceMotion){
+    document.querySelectorAll('.tilt-card').forEach(card=>{
+      const layers = card.querySelectorAll('[data-depth]');
+      card.addEventListener('mousemove', e=>{
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.setProperty('--rx', (-py * 9).toFixed(2) + 'deg');
+        card.style.setProperty('--ry', (px * 11).toFixed(2) + 'deg');
+        layers.forEach(l=>{
+          const depth = parseFloat(l.dataset.depth);
+          l.style.transform = `translate3d(${(px*depth).toFixed(1)}px, ${(py*depth).toFixed(1)}px, ${depth}px)`;
+        });
+      });
+      card.addEventListener('mouseleave', ()=>{
+        card.style.setProperty('--rx','0deg');
+        card.style.setProperty('--ry','0deg');
+        layers.forEach(l=> l.style.transform = 'translate3d(0,0,0)');
+      });
+    });
+
+    /* ---------- MAGNETIC BUTTONS ---------- */
+    document.querySelectorAll('.magnetic').forEach(btn=>{
+      btn.addEventListener('mousemove', e=>{
+        const rect = btn.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width/2) * 0.28;
+        const y = (e.clientY - rect.top - rect.height/2) * 0.28;
+        btn.style.transform = `translate(${x}px,${y}px)`;
+      });
+      btn.addEventListener('mouseleave', ()=>{ btn.style.transform = 'translate(0,0)'; });
+    });
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduceMotion){
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){ en.target.classList.add('in-view'); io.unobserve(en.target); }
+      });
+    }, {threshold:0.12});
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in-view'));
+  }
+
+  /* ---------- PRODUCT FILTER ---------- */
+  const filterBtns = document.querySelectorAll('.filter-chip');
+  const productCards = document.querySelectorAll('.product-card');
+  filterBtns.forEach(btn=>btn.addEventListener('click', ()=>{
+    filterBtns.forEach(b=>b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    const f = btn.dataset.filter;
+    productCards.forEach(card=>{
+      const match = f === 'all' || card.dataset.type === f;
+      card.classList.toggle('is-hidden', !match);
+    });
+  }));
+
+  /* ---------- CONTENT TABS ---------- */
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(btn=>btn.addEventListener('click', ()=>{
+    tabBtns.forEach(b=>b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    tabPanels.forEach(p=>p.classList.toggle('is-active', p.dataset.panel === btn.dataset.tab));
+  }));
+
+  /* ---------- SKELETON LOADING ---------- */
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{ document.body.classList.remove('is-loading'); document.body.classList.add('is-loaded'); }, 750);
+  });
+
+  /* ---------- FORM DEMO SUBMIT ---------- */
+  document.querySelectorAll('form').forEach(f=>f.addEventListener('submit', e=>{
+    e.preventDefault();
+    const btn = f.querySelector('button[type="submit"]');
+    if(btn){ const original = btn.innerHTML; btn.innerHTML = '✓ انجام شد'; setTimeout(()=>btn.innerHTML = original, 1800); }
+  }));
+})();
+</script>
+</body>
+</html>
